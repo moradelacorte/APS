@@ -85,9 +85,9 @@ mi_lista += [Fs]
 mi_lista[0]
 # el segundo
 mi_lista[1]
-# el ante-último
-mi_lista[-1]
 # el último
+mi_lista[-1]
+# el ante-último
 mi_lista[-2]
 
 print(mi_lista)

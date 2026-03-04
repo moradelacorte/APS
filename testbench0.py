@@ -125,12 +125,12 @@ def my_testbench( sig_type ):
         
 # Uso de diferentes tipos de datos en Python            
 
-## tipo de variable diccionario. Puedo crearlo iniciándolo mediante CONSTANTES
+# # tipo de variable diccionario. Puedo crearlo iniciándolo mediante CONSTANTES
 
-#sig_props = { 'tipo': 'senoidal', 
-#              'frecuencia': (3, 6, 9), # Uso de tuplas para las frecuencias 
-#              'amplitud':   (1, 1,  1),
-#              'fase':       (0, 0,  0)
+# sig_props = { 'tipo': 'senoidal', 
+#               'frecuencia': (3, 6, 9), # Uso de tuplas para las frecuencias 
+#               'amplitud':   (1, 1,  1),
+#               'fase':       (0, 0,  0)
 #             } 
 # # Como también puedo agregar un campo descripción de manera programática
 # # este tipo de sintaxis es *MUY* de Python
