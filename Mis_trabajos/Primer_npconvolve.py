@@ -67,3 +67,4 @@ plt.title("Convolución y[n]")
 
 plt.tight_layout()
 plt.show()
+
