@@ -16,9 +16,9 @@ from scipy.signal import windows, freqz
 # 1. Configuración de parámetros
 N = 51  # Largo de la ventana
 fft_size = 2048  # zero-padding
-win_names = ['boxcar', 'hamming', 'hann', 'blackman']
-labels = ['Rectangular', 'Hamming', 'Hann', 'Blackman']
-colors = ['#1f77b4', '#7cfc00', '#ffbc00', '#ff0000'] # Colores similares a tu imagen
+win_names = ['boxcar', 'hamming', 'hann', 'blackman', 'flattop']
+labels = ['Rectangular', 'Hamming', 'Hann', 'Blackman', 'flattop']
+colors = ['#1f77b4', '#7cfc00', '#ffbc00', '#ff0000', 'pink'] # Colores similares a tu imagen
 
 plt.figure(figsize=(12, 7))
 
