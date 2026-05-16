@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 Materia: Análisis y Procesamiento de Señales
-Fecha: Thu May  7 18:40:56 2026
+Fecha: Sat May 16 11:29:24 2026
 
 @author: Mora De La Corte
 
 Descripción: 
-    superponer cada ventana, la amplitud
-    segundo estimador --> en frecuencia
-        argmax_k(|X(k)|) vas a tener que encontrar el argumento que maximiza, buscar estos maximos       
     
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import windows
@@ -22,7 +20,7 @@ ts = 1/fs
 
 omega_0 = fs/4
 
-np.random.seed(42) # Para comparar con Jaz
+np.random.seed(3)
 
 fr = np.random.uniform(-2, 2, R).reshape((R,1))
 
@@ -33,7 +31,7 @@ tt= (np.arange(0,N)*ts).reshape((1, N))
 
 nn = np.tile(tt, (R,1)) 
 
-SNR = 10 # Probar 10 y 3
+SNR = 3 # Probar 10 y 3
 print(f"SNR: {SNR}")
 sigma = 10**(-SNR /20)
 mu=0 # Distribucion normal
@@ -45,8 +43,6 @@ xx = np.sqrt(2) * np.sin(np.pi*2*omega*nn) + na
 plt.figure(1)
 plt.plot (xx.T)
 
-# N_pad = N * 10
-# k0_pad = int(N_pad * (omega_0/fs))
 
 # Para la ventana rectangular -------------------------------------------------
 print("Ventana rectagular ------------------")
@@ -76,7 +72,7 @@ print("\nEstimadores de frecuencia")
 print(f"Sesgo: {ses_frec_rec}")
 print(f"Varianza: {var_frec_rec}")
 
-# Para la ventana flattop -------------------------------------------------
+# Para la ventana flattop -----------------------------------------------------
 print("\n\nVentana flattop ------------------")
 win_ft = windows.flattop(N)
 xx_ft = xx * win_ft
@@ -106,7 +102,7 @@ print("\nEstimadores de frecuencia")
 print(f"Sesgo: {ses_frec_ft}")
 print(f"Varianza: {var_frec_ft}")
 
-# Para la ventana Blackmanharris -------------------------------------------------
+# Para la ventana Blackmanharris ----------------------------------------------
 print("\n\nVentana Blackmanharris ------------------")
 win_bh = windows.blackmanharris(N)
 xx_bh = xx * win_bh
@@ -136,7 +132,7 @@ print("\nEstimadores de frecuencia")
 print(f"Sesgo: {ses_frec_bh}")
 print(f"Varianza: {var_frec_bh}")
 
-# Para la ventana Hamming -------------------------------------------------
+# Para la ventana Hamming -----------------------------------------------------
 print("\n\nVentana Hamming ------------------")
 win_hm = windows.hamming(N)
 xx_hm = xx * win_hm
@@ -166,45 +162,46 @@ print("\nEstimadores de frecuencia")
 print(f"Sesgo: {ses_frec_hm}")
 print(f"Varianza: {var_frec_hm}")
 
-# GRAFICOS --------------------------------------------------------------------
+# Grafico ventanas ------------------------------------------------------------
 
-# Grafica de la FFT con ventana rectangular 
-plt.figure(2)
-N_fft = 2048  # Aumentamos puntos para que se vea suave y profesional
-n = np.arange(N)
+# Usamos mucho zero-padding para ver la curva espectral suave
+N_pad = N * 10
+df = fs / N_pad
 
-# 2. Crear la ventana flattop original
-win_ft = windows.flattop(N)
+# 2. Armamos los índices con arange (asumiendo que N_pad es par)
+k_pos = np.arange(0, N_pad // 2)      # Índices positivos: 0, 1, 2...
+k_neg = np.arange(-N_pad // 2, 0)     # Índices negativos: -N/2, -N/2+1... -1
 
-# 3. Modulación para centrar en N/4 (frecuencia f0 = 1/4)
-f0 = 1/4
-win_shifted = win_ft * np.exp(2j * np.pi * f0 * n)
+# 3. Concatenamos y multiplicamos por df
+freqs_pad = np.concatenate((k_pos, k_neg)) * df
 
-# 4. Calcular la FFT
-W_ft = np.fft.fft(win_shifted, N_fft) / N
+bins_pad = freqs_pad * N / fs # Eje X convertido a "bines relativos"
 
-# 5. Eje de frecuencias (de 0 a 1, donde 0.25 es N/4)
-freq = np.linspace(0, 1, N_fft, endpoint=False)
+# FFT de las ventanas normalizadas
+W_rec = np.fft.fftshift(np.abs(np.fft.fft(win_rec, N_pad)) / N)
+W_ft = np.fft.fftshift(np.abs(np.fft.fft(win_ft, N_pad)) / cg_ft)
+W_bh = np.fft.fftshift(np.abs(np.fft.fft(win_bh, N_pad)) / cg_bh)
+W_hm = np.fft.fftshift(np.abs(np.fft.fft(win_hm, N_pad)) / cg_hm)
 
-# 6. Magnitud en dB (normalizada)
-mag = 20 * np.log10(np.abs(W_ft) / np.max(np.abs(W_ft)))
+# Eje X para que quede centrado
+bins_pad_shift = np.fft.fftshift(bins_pad)
 
-# 7. Graficar
+plt.figure(2, figsize=(10, 6))
+plt.plot(bins_pad_shift, W_rec, label='Rectangular')
+plt.plot(bins_pad_shift, W_ft, label='Flattop')
+plt.plot(bins_pad_shift, W_bh, label='Blackman-Harris')
+plt.plot(bins_pad_shift, W_hm, label='Hamming')
 
-plt.plot(freq, mag, label="Flattop centrada en N/4")
+# Área donde caen las frecuencias aleatorias (-2 a 2 bines)
+plt.axvspan(-2, 2, color='gray', alpha=0.2, label='Desintonía de la señal (±2 bines)')
 
-# Marcar el punto N/4 (0.25 en frecuencia normalizada)
-plt.axvline(0.25, color='red', linestyle='--', label='Centro (N/4)')
-
-plt.title("DFT de Ventana Flattop desplazada a $N/4$")
-plt.xlabel("Frecuencia Normalizada (f/fs)")
-plt.ylabel("Magnitud [dB]")
-plt.ylim([-100, 5])
-plt.xlim([0, 0.5]) # Zoom en la primera mitad para ver el pico claro
-plt.grid(True, alpha=0.3)
+plt.xlim(-10, 10)
+plt.title('Espectro de las Ventanas (Evaluación de Amplitud)')
+plt.xlabel('Desvío respecto a N/4 (en bines)')
+plt.ylabel('Ganancia de Amplitud')
 plt.legend()
-
-
+plt.grid(True)
+plt.show()
 
 # ---- Estamacion amplitud ----
 plt.figure(3)
@@ -225,7 +222,7 @@ plt.xlabel('Amplitud estimada')
 plt.ylabel('Densidad de probabilidad')
 plt.legend() 
 plt.grid(axis='y', alpha=0.3)
-9
+
 # ---- Estamacion frecuencia ----
 plt.figure(4)
 plt.hist(frec_rec, bins=20, color='skyblue', edgecolor='black', 
@@ -245,37 +242,3 @@ plt.xlabel('Frecuencia estimada')
 plt.ylabel('Densidad de probabilidad')
 plt.legend() 
 plt.grid(axis='y', alpha=0.3)
-
-
-#%% DSP
-psd_k0 = (np.abs(X_rec_k0)**2) / N
-plt.figure(4)
-plt.hist(psd_k0, bins=30, color='skyblue', edgecolor='black', density=True)
-
-# Añadir detalles estéticos
-plt.title(f'Histograma de la DSP en $k_0$ ({R} realizaciones)')
-plt.xlabel('Potencia $|X(k_0)|^2 / N$')
-plt.ylabel('Densidad de probabilidad')
-plt.grid(alpha=0.3)
-
-# Calcular la DSP de toda la matriz (R x N)
-psd_completa = (np.abs(X_rec)**2) / N
-
-# Promediar sobre las R realizaciones para reducir la varianza
-psd_promedio = np.mean(psd_completa, axis=0)
-
-# Graficar el espectro de potencia promedio
-plt.figure(5)
-frecuencias = np.fft.fftfreq(N, ts)
-plt.plot(np.fft.fftshift(frecuencias), np.fft.fftshift(psd_promedio))
-plt.title('DSP Promediada (Periodograma de Welch simplificado)')
-plt.xlabel('Frecuencia [Hz]')
-plt.ylabel('Potencia')
-plt.grid()
-
-plt.show()
-
-
-
-
-
