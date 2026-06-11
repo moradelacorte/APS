@@ -24,10 +24,10 @@ nyq_frec = fs/2
 ripple = 1 # dB
 atenuacion = 40 # dB
  
-ws1 = 0.1
+ws1 = 0.2
 wp1 = 0.5
 wp2 = 35
-ws2 = 45
+ws2 = 40
 
 frecs = np.array([0.0,         ws1,         wp1,     wp2,     ws2,         nyq_frec   ]) / nyq_frec
 gains_db = np.array([-atenuacion, -atenuacion, -ripple, -ripple, -atenuacion, -atenuacion])
@@ -49,7 +49,7 @@ omega, resp_freq = sig.freqz_sos(sos, worN=ww, fs=fs)
 
 #%% Diseño de FIR
 
-numtaps = 3601 # Como minimo de mayor orden del peor de los IIR
+numtaps = 3000 # Como minimo de mayor orden del peor de los IIR mas de 3000 no hace falta
 demora = (numtaps - 1)//2 
 
 freq = np.array([0.0, ws1, wp1, wp2, ws2, fs//2]) 

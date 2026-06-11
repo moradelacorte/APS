@@ -42,15 +42,15 @@ hb_2 = mat_struct['heartbeat_pattern2']
 # plt.figure()
 # plt.plot(hb_2)
 
-#%% Señal cuadrada
+# #%% Señal cuadrada
 
-frecuencia = 5       
-fs = 1000          
-duracion = 1         
+# frecuencia = 5       
+# fs = 1000          
+# duracion = 1         
 
-t = np.linspace(0, duracion, int(fs * duracion), endpoint=False)
+# t = np.linspace(0, duracion, int(fs * duracion), endpoint=False)
 
-senal_cuadrada = sig.square(2 * np.pi * frecuencia * t)
+# senal_cuadrada = sig.square(2 * np.pi * frecuencia * t)
 
 #%% Plantilla -------------------------------------------------------------------
  
@@ -60,8 +60,8 @@ atenuacion = 40 # dB
  
 ws1 = 0.1
 wp1 = 0.5
-wp2 = 45
-ws2 = 35
+wp2 = 35
+ws2 = 45
 
 frecs = np.array([0.0,         ws1,         wp1,     wp2,     ws2,         nyq_frec   ]) / nyq_frec
 gains_db = np.array([-atenuacion, -atenuacion, -ripple, -ripple, -atenuacion, -atenuacion])
@@ -193,8 +193,8 @@ ecg_chb1 = sig.sosfiltfilt(sos_chb1, ecg_one_lead)
 ecg_chb2 = sig.sosfiltfilt(sos_chb2, ecg_one_lead)
 ecg_cau = sig.sosfiltfilt(sos_cau, ecg_one_lead)
 
-square_filtrado = sig.sosfilt(sos_coef, senal_cuadrada)
-square_filtrado_ff = sig.sosfiltfilt(sos_ff, senal_cuadrada)
+# square_filtrado = sig.sosfilt(sos_coef, senal_cuadrada)
+# square_filtrado_ff = sig.sosfiltfilt(sos_ff, senal_cuadrada)
 
 #%% Regiones de interés sin ruido  
  
@@ -267,11 +267,11 @@ for ii in regs_interes:
 # plt.grid(True)
 # plt.show()
 
-plt.figure(figsize=(10, 4))
-plt.plot(senal_cuadrada, label='Original Sucio', alpha=0.7)
-plt.plot(square_filtrado, label='Filtrado / Limpio', color='red', linewidth=1.5)
-plt.plot(square_filtrado_ff, label='filtfilt', color='orange', linewidth=1.5)
-plt.title('Efecto del Filtro Pasabanda en el ECG')
-plt.legend()
-plt.grid(True)
-plt.show()
+# plt.figure(figsize=(10, 4))
+# plt.plot(senal_cuadrada, label='Original Sucio', alpha=0.7)
+# plt.plot(square_filtrado, label='Filtrado / Limpio', color='red', linewidth=1.5)
+# plt.plot(square_filtrado_ff, label='filtfilt', color='orange', linewidth=1.5)
+# plt.title('Efecto del Filtro Pasabanda en el ECG')
+# plt.legend()
+# plt.grid(True)
+# plt.show()
