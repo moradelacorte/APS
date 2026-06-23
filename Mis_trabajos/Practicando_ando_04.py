@@ -6,7 +6,7 @@ Fecha: Mon Jun 22 11:26:46 2026
 @author: Mora De La Corte
 
 Descripción: 
-    Simulación del filtro dado en el segundo parcial 
+    Simulación del filtro dado en el segundo parcial punto 1
 """
 
 import numpy as np
